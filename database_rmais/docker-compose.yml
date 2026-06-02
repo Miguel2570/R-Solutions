@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  # 1. POSTGRESQL
+  postgres:
+    image: postgres:16-alpine
+    container_name: rmais-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: rmais_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - rmais_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 2. PGADMIN4
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: rmais-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@rmais.pt
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5051:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - rmais_network
+
+  # 3. LIQUIBASE (Migrações)
+  liquibase:
+    image: liquibase/liquibase:4.25
+    container_name: rmais-liquibase
+    environment:
+      - LIQUIBASE_COMMAND_URL=jdbc:postgresql://postgres:5432/rmais_db
+      - LIQUIBASE_COMMAND_USERNAME=postgres
+      - LIQUIBASE_COMMAND_PASSWORD=root
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./changelog:/liquibase/changelog
+    networks:
+      - rmais_network
+    command: --changelog-file=changelog.yaml update
+
+  # 4. ELASTICSEARCH (Logs)
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    container_name: rmais-elasticsearch
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    networks:
+      - rmais_network
+
+  # 5. KIBANA (Interface para os Logs)
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.12.0
+    container_name: rmais-kibana
+    restart: unless-stopped
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      - rmais_network
+
+networks:
+  rmais_network:
+    driver: bridge
+
+volumes:
+  pgdata:
+  esdata:

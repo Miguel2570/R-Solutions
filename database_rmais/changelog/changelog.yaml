@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - includeAll:
+      path: tables
+      runOnChange: true
+      relativeToChangelogFile: true
+      errorIfMissingOrEmpty: true
+  - includeAll:
+      path: seed
+      runOnChange: true
+      relativeToChangelogFile: true
+      errorIfMissingOrEmpty: true
+  - includeAll:
+      path: scripts
+      runOnChange: true
+      relativeToChangelogFile: true
+      errorIfMissingOrEmpty: true
+
