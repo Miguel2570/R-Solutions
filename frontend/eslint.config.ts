@@ -4,10 +4,7 @@ import pluginVue from 'eslint-plugin-vue'
 import pluginOxlint from 'eslint-plugin-oxlint'
 import skipFormatting from 'eslint-config-prettier/flat'
 
-// To allow more languages other than `ts` in `.vue` files, uncomment the following lines:
-// import { configureVueProject } from '@vue/eslint-config-typescript'
-// configureVueProject({ scriptLangs: ['ts', 'tsx'] })
-// More info at https://github.com/vuejs/eslint-config-typescript/#advanced-setup
+import { configureVueProject } from '@vue/eslint-config-typescript'
 
 export default defineConfigWithVueTs(
   {
@@ -23,4 +20,10 @@ export default defineConfigWithVueTs(
   ...pluginOxlint.buildFromOxlintConfigFile('.oxlintrc.json'),
 
   skipFormatting,
+
+  {
+    rules: {
+      'vue/multi-word-component-names': 'off'
+    }
+  }
 )

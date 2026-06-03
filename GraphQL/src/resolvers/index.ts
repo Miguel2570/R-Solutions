@@ -1,9 +1,14 @@
-// src/schema/resolvers.ts
-import { getProducts } from "./product/product.queries";
+import { productQueries } from "./product/product.queries";
 
+// Junta tudo num único objeto para enviar para o Apollo Server
 export const resolvers = {
-  Query: {
-    // Aqui usamos o nome EXATO que definiste no ficheiro .graphql
-    getProducts: getProducts, 
-  },
+    Query: {
+        ...productQueries,
+        // ...userQueries,
+        // ...invoiceQueries,
+    },
+    Mutation: {
+        // ...productMutations,
+        // ...userMutations,
+    }
 };

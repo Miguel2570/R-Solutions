@@ -1,12 +1,14 @@
-import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client/core';
+import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client/core'
 
-// 1. Criamos o link HTTP separadamente
-const httpLink = new HttpLink({
-  uri: 'http://localhost:4002/graphql',
-});
+// Apontamos para a porta onde o teu servidor GraphQL está a correr
+const httpLink = createHttpLink({
+  uri: 'http://localhost:4002/',
+})
 
-// 2. Passamos o link e o cache para o cliente
+// O Cache ajuda o site a ser muito mais rápido, não pedindo dados repetidos
+const cache = new InMemoryCache()
+
 export const apolloClient = new ApolloClient({
   link: httpLink,
-  cache: new InMemoryCache(),
-});
+  cache,
+})

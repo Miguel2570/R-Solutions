@@ -1,11 +1,20 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { RouterView } from 'vue-router'
+
+// Importamos a Navbar e o Footer que acabaste de copiar
+import Navbar from '@/components/layout/Navbar.vue'
+import Footer from '@/components/layout/Footer.vue'
+</script>
 
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
-</template>
+  <div class="flex flex-col min-h-screen">
+    
+    <Navbar />
 
-<style scoped></style>
+    <main class="flex-grow pt-16"> <RouterView />
+    </main>
+
+    <Footer />
+    
+  </div>
+</template>

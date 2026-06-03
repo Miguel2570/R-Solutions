@@ -5,7 +5,3 @@ type Product {
   category: String
   price: Float
 }
-
-type Query {
-  getProducts: [Product]
-}
